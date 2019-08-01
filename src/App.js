@@ -1,58 +1,82 @@
 import React from 'react';
 
+import * as StorageWorker from './utils/StorageWorker';
+import * as PrepareData from './utils/prepareDataToSave';
+import * as DomWorker from './utils/domWorker';
+import TagsFilter from './utils/tagsFilter';
+
 import NotesList from './components/NotesList';
 import NotesViewer from './components/NotesViewer';
+
 import './App.scss';
-import TagsFilter from './utils/tagsFilter';
-import NOTES from './data/notes';
-import TAGS from './data/tags';
+
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeNote: 1
+      activeNote: StorageWorker.firstId('notes'),
+      tags: StorageWorker.getData('tags'),
+      notes: StorageWorker.getData('notes')
     }
   }
 
   changeNote = (target) => {
-    this.editNoteEnd();
+    DomWorker.editEnd();
     this.setState({activeNote: target.id});
   }
 
-  editNoteStart = () => {
-    const noteText = document.querySelector('.textArea');
-    noteText.setAttribute('contentEditable', true);
-    noteText.classList.add('editNoteText');
-    noteText.focus();
-    document.getElementById('editBtn').classList.add('hidden');
-    document.getElementById('saveBtn').classList.remove('hidden');
-    document.querySelector('.notes-viewer > h1').style = "display: none";
-    document.getElementById('editNoteTitle').classList.remove('hidden');
+  reReadStorage = () => {
+    this.setState({
+      tags: StorageWorker.getData('tags'),
+      notes: StorageWorker.getData('notes')
+    })
+    if (!StorageWorker.isExist(this.state.activeNote)) {
+      this.setState({activeNote: StorageWorker.firstId('notes')})
+    }
   }
 
-  editNoteEnd = () => {
-    const noteText = document.querySelector('.textArea');
-    noteText.setAttribute('contentEditable', false);
-    noteText.classList.remove('editNoteText');
-    document.getElementById('editBtn').classList.remove('hidden');
-    document.getElementById('saveBtn').classList.add('hidden');
-    document.querySelector('.notes-viewer > h1').style = {};
-    document.getElementById('editNoteTitle').classList.add('hidden');
+  deleteData = (key, id) => {
+    StorageWorker.deleteData(key, id);
+    this.reReadStorage();
+  }
+
+  saveData = (key, id) => {
+    const dataToSave = key === 'tags' ? PrepareData.formatTag() : PrepareData.getNoteObj(id);
+    StorageWorker.saveData(key, dataToSave, id);
+    this.reReadStorage();
+    DomWorker.editEnd();
+  }
+
+  newNote = () => {
+    DomWorker.editStart();
+    DomWorker.clearAllInputs();
+    document.getElementById('editNoteTitle').value = document.getElementById('newNoteTitle').value;
+    const newId = StorageWorker.newId('notes');
+    const emptyNote = PrepareData.getNoteObj(newId);
+    StorageWorker.saveData('notes', emptyNote, newId);
+    this.reReadStorage();
+    this.setState({ activeNote: newId });
   }
 
   render() {
+    const { activeNote, tags, notes } = this.state;
     return (
     <div className="App">
       <NotesList
-        notes={ NOTES.notes } 
-        tags={ TAGS.tags } 
+        activeNote={ activeNote }
+        notes={ notes } 
+        tags={ tags } 
         onChange={ this.changeNote }
+        deleteData={this.deleteData }
+        saveData={ this.saveData }
+        newNote={ this.newNote }
       />
       <NotesViewer 
-        note={ NOTES.notes[this.state.activeNote] } 
-        tags={ TagsFilter(TAGS.tags, NOTES.notes[this.state.activeNote].tags.split(',')) }
-        editNote={ this.editNoteStart } 
-          saveNote={ this.editNoteEnd } 
+        note={ notes[this.state.activeNote] } 
+        tags={ TagsFilter(tags, notes[activeNote].tags.split(',')) }
+        editNote={ DomWorker.editStart } 
+        saveData={ this.saveData } 
+        deleteData={ this.deleteData }
       />
     </div>
     )

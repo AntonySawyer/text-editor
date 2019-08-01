@@ -1,6 +1,6 @@
 import React from 'react';
 import TagCloud from '../TagCloud';
-import focusAtEnd from '../../utils/focusAtEnd';
+import { focusAtEnd } from '../../utils/domWorker';
 import './NotesViewer.scss';
 
 export default class NotesViewer extends React.Component {
@@ -35,24 +35,28 @@ export default class NotesViewer extends React.Component {
     const content = container.innerText;
     if (content.indexOf('#') !== -1) {
       container.innerHTML = content.replace(/(#\w+)/g, `<span class="hightlight">$1</span>`);
-      focusAtEnd(container);
+      if (document.querySelector(':focus') !== null && document.querySelector(':focus').id === 'noteText') {
+        focusAtEnd(container);
+      }
     }
   }
 
   render() {
-    const { tags, editNote, saveNote } = this.props;
+    const { note, tags, editNote, saveData, deleteData } = this.props;
 
     return (
       <div className="notes-viewer">
         <h1>{ this.state.title }</h1>
         <input type="text" value={ this.state.title } className="hidden" id="editNoteTitle"
          onChange={this.handleChange} name="title" />
-        <button className="btn btn-red">Del</button>
+        <button className="btn btn-red" onClick={() => deleteData('notes', note.id) }>Del</button>
         <button className="btn btn-orange" onClick={ editNote } id="editBtn">Edit</button>
-        <button className="btn btn-green hidden" onClick={ saveNote } id="saveBtn">Save</button>
+        <button className="btn btn-green hidden" onClick={() => saveData('notes', note.id) } id="saveBtn">Save</button>
         <p className="textArea" id="noteText" contentEditable={false} 
           onInput={this.handleChange} name="text">{this.props.note.text}</p>
-        <TagCloud tags={ tags } />
+        <div id="noteTags">
+          <TagCloud tags={tags} />
+        </div>
       </div>
   )}
 }
