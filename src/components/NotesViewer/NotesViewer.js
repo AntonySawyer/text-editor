@@ -23,8 +23,9 @@ export default class NotesViewer extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ 
-      title: nextProps.note.title });
+    if (document.querySelector('p[contenteditable="true"]') === null) {
+      this.setState({ title: nextProps.note.title });
+    }
   }
 
   handleChange = (event) => {
@@ -63,7 +64,7 @@ export default class NotesViewer extends React.Component {
         <p className="textArea" id="noteText" contentEditable={false} 
           onKeyUp={this.handleChange} name="text">{this.props.note.text}</p>
         <div id="noteTags">
-          <TagCloud tags={tags} addNew={false} filter={filter} />
+          <TagCloud tags={tags} addNew={false} filter={filter} deleteData={deleteData} />
         </div>
       </div>
   )}
