@@ -17,6 +17,7 @@ export function editEnd() {
   document.getElementById('saveBtn').classList.add('hidden');
   document.querySelector('.notes-viewer > h1').style = {};
   document.getElementById('editNoteTitle').classList.add('hidden');
+  document.getElementById('newNoteTitle').value = '';
 }
 
 export function clearAllInputs() {

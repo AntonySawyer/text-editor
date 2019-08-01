@@ -13,6 +13,7 @@ import './App.scss';
 class App extends React.Component {
   constructor(props) {
     super(props);
+    StorageWorker.checkData();
     this.state = {
       activeNote: StorageWorker.firstId('notes'),
       tags: StorageWorker.getData('tags'),
@@ -58,6 +59,19 @@ class App extends React.Component {
     this.setState({ activeNote: newId });
   }
 
+  autoTagCreate = (newTagsNote) => {
+    const { activeNote, notes, tags } = this.state;
+    const savedTags = Object.values(tags);
+    const newTagsTotal = newTagsNote.filter(i => !savedTags.includes(i));
+    newTagsTotal.map(i => PrepareData.formatTag(i));
+    const newTagsTotalUnique = PrepareData.uniqueArr(newTagsTotal);
+    newTagsTotalUnique.forEach(tag => StorageWorker.saveData('tags', tag));
+
+    const modifNote = PrepareData.injectTags(notes[activeNote], newTagsNote);
+    StorageWorker.saveData('notes', modifNote, activeNote);
+    this.reReadStorage();
+  }
+
   render() {
     const { activeNote, tags, notes } = this.state;
     return (
@@ -77,6 +91,7 @@ class App extends React.Component {
         editNote={ DomWorker.editStart } 
         saveData={ this.saveData } 
         deleteData={ this.deleteData }
+        autoTagCreate={ this.autoTagCreate }
       />
     </div>
     )
