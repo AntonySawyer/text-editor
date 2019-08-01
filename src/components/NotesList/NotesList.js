@@ -5,7 +5,7 @@ import './NotesList.scss';
 
 
 
-export default ({ activeNote, notes, tags, onChange, deleteData, saveData, newNote }) => {
+export default ({ activeNote, notes, tags, onChange, deleteData, saveData, newNote, filter, filterEnabled }) => {
   const NotesTitles = [];
   Object.keys(notes).forEach((id, index) => {
     NotesTitles.push(<li key={id}>
@@ -23,7 +23,9 @@ export default ({ activeNote, notes, tags, onChange, deleteData, saveData, newNo
       <ul>
         { NotesTitles }
       </ul>
-      <TagCloud tags={tags} deleteData={ deleteData } saveData={ saveData } />
+      <span>Filter by: { filterEnabled || 'none' }</span>
+      <button onClick={() => filter(null)}>X</button>
+      <TagCloud tags={tags} deleteData={deleteData} saveData={saveData} addNew={true} filter={filter} />
     </div>
   )
 }

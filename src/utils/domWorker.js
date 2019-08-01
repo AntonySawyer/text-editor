@@ -22,7 +22,6 @@ export function editEnd() {
 
 export function clearAllInputs() {
   document.querySelector('.textArea').innerHTML = '';
-  document.getElementById('editNoteTitle').value = '';
 }
 
 export function focusAtEnd(el) {

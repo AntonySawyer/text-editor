@@ -17,7 +17,8 @@ class App extends React.Component {
     this.state = {
       activeNote: StorageWorker.firstId('notes'),
       tags: StorageWorker.getData('tags'),
-      notes: StorageWorker.getData('notes')
+      notes: StorageWorker.getData('notes'),
+      filterEnabled: ''
     }
   }
 
@@ -72,6 +73,28 @@ class App extends React.Component {
     this.reReadStorage();
   }
 
+  filter = (id) => {
+    if (id === null) {
+      this.reReadStorage();
+      return;
+    }    
+    const notes = StorageWorker.getData('notes');
+    const tags = StorageWorker.getData('tags');
+    const filteredNotes = {};
+    for (const noteId in notes) {
+      if (notes[noteId].tags.split(',').includes(tags[id])) {
+        filteredNotes[noteId] = notes[noteId];
+      }
+    }
+    if (Object.keys(filteredNotes).length !== 0) {
+      this.setState({ activeNote: Object.keys(filteredNotes)[0], 
+        notes: filteredNotes,
+        filterEnabled: tags[id] });
+    } else {
+      this.deleteData('tags', id);
+    }
+  }
+
   render() {
     const { activeNote, tags, notes } = this.state;
     return (
@@ -84,6 +107,8 @@ class App extends React.Component {
         deleteData={this.deleteData }
         saveData={ this.saveData }
         newNote={ this.newNote }
+        filter={ this.filter }
+        filterEnabled={ this.state.filterEnabled }
       />
       <NotesViewer 
         note={ notes[this.state.activeNote] } 
@@ -92,6 +117,7 @@ class App extends React.Component {
         saveData={ this.saveData } 
         deleteData={ this.deleteData }
         autoTagCreate={ this.autoTagCreate }
+        filter={this.filter}
       />
     </div>
     )

@@ -50,7 +50,7 @@ export default class NotesViewer extends React.Component {
   }
 
   render() {
-    const { note, tags, editNote, saveData, deleteData } = this.props;
+    const { note, tags, editNote, saveData, deleteData, filter } = this.props;
 
     return (
       <div className="notes-viewer">
@@ -63,7 +63,7 @@ export default class NotesViewer extends React.Component {
         <p className="textArea" id="noteText" contentEditable={false} 
           onKeyUp={this.handleChange} name="text">{this.props.note.text}</p>
         <div id="noteTags">
-          <TagCloud tags={tags} />
+          <TagCloud tags={tags} addNew={false} filter={filter} />
         </div>
       </div>
   )}
