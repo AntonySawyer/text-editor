@@ -1,34 +1,37 @@
+@import '../../index';
+
 .notes-viewer {
   width: 70%;
+  h1 {
+    display: inline;
+    margin-right: 10px;
+  }
+  .btn {
+    font-size: $fs-middle;
+  }
 }
 
-.notes-viewer h1 {
-  display: inline;
-  margin-right: 10px;
-}
-
-.notes-viewer > .btn {
-  font-size: 14px;
-}
-
-.textArea,
-textarea {
+@mixin textarea($border-color) {
   display: block;
   width: 700px;
-  height: 350px;
-  resize: none;
+  max-height: 350px;
+  overflow: overlay;
+  border: 1px solid $border-color;
+  padding: 10px;  
 }
 
-textarea[readonly] {
-  cursor: default;
-  border: none;
+.textArea {
+  @include textarea($light);
+}
+
+.editNoteText {
+  @include textarea($black);
 }
 
 .hightlight {
   font-weight: bold;
-  color: rgb(180, 169, 169);
-}
-
-.editNoteText {
-  border: 1px solid black;
+  color: $orange;
+  &:hover {
+    color: $green;
+  }
 }

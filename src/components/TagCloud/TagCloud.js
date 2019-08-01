@@ -1,7 +1,6 @@
 import React from 'react';
 
 import Tag from '../Tag';
-import './TagCloud.scss';
 
 export default ({ tags, deleteData, saveData, addNew, filter }) => {
   const TagsElements = [];
@@ -11,7 +10,7 @@ export default ({ tags, deleteData, saveData, addNew, filter }) => {
   });
   return (
     <div className="tag-cloud">
-      {addNew && <input type="text" id="newTadName" /> }
+      {addNew && <input type="text" id="newTadName" placeholder="Type new tag here..." /> }
       {addNew && <button className="btn btn-green" onClick={() => saveData('tags')}>Add</button> }
       <div>
         {TagsElements}

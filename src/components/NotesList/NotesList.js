@@ -7,8 +7,8 @@ import './NotesList.scss';
 
 export default ({ activeNote, notes, tags, onChange, deleteData, saveData, newNote, filter, filterEnabled }) => {
   const NotesTitles = [];
-  Object.keys(notes).forEach((id, index) => {
-    NotesTitles.push(<li key={id}>
+  Object.keys(notes).forEach(id => {
+    NotesTitles.push(<li key={id} className={activeNote === id ? 'active' : undefined}>
       <label htmlFor={`note_${id}`}>{notes[id].title}</label>
       <input type="radio" id={`note_${id}`} name="notesTitles" 
         checked={+id === +activeNote} 
@@ -24,7 +24,7 @@ export default ({ activeNote, notes, tags, onChange, deleteData, saveData, newNo
         { NotesTitles }
       </ul>
       <span>Filter by: { filterEnabled || 'none' }</span>
-      <button onClick={() => filter(null)}>X</button>
+      <button onClick={() => filter(null)} className="btn btn-inverted">X</button>
       <TagCloud tags={tags} deleteData={deleteData} saveData={saveData} addNew={true} filter={filter} />
     </div>
   )

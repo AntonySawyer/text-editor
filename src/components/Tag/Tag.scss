@@ -1,8 +1,25 @@
+@import '../../index';
+
 .tag-wrapper {
   display: inline-block;
   margin-left: 5px;
-}
+  .btn {
+    font-size: $fs-small;
+    margin-left: 1px;
+    vertical-align: middle;
+  }
+  span {
+    border: 1px solid $orange;
+    border-radius: 8px;
+    padding: 1px 6px;
+    font-size: $fs-middle;
+    display: inline-block;
+    margin: 4px 0px 0px 5px;
+    cursor: pointer;
 
-.tag-wrapper .btn {
-  font-size: 10px;
+    &:hover {
+      background-color: $orange;
+      color: $white;
+    }
+  }
 }

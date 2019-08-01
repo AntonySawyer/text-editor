@@ -1,0 +1,27 @@
+@import url(https://fonts.googleapis.com/css?family=Poiret+One);
+
+$green: #2ecc71;
+$orange: #f7b11a;
+$red: #e74c3c;
+$light: #e2e2e2;
+$white: #ffffff;
+$black: black;
+
+$fs-head: 32px;
+$fs-big: 24px;
+$fs-middle: 16px;
+$fs-small: 9px;
+
+* {
+  font-family: sans-serif;
+  font-size: $fs-middle;
+}
+
+body {
+  margin: 0;
+}
+
+:active, :hover, :focus {
+    outline: 0;
+    outline-offset: 0;
+}

@@ -39,6 +39,7 @@ class App extends React.Component {
 
   deleteData = (key, id) => {
     StorageWorker.deleteData(key, id);
+    this.setState({filterEnabled: ''});
     this.reReadStorage();
   }
 
@@ -53,6 +54,7 @@ class App extends React.Component {
     DomWorker.editStart();
     DomWorker.clearAllInputs();
     document.getElementById('editNoteTitle').value = document.getElementById('newNoteTitle').value;
+    document.getElementById('noteTags').innerHTML = '';
     const newId = StorageWorker.newId('notes');
     const emptyNote = PrepareData.getNoteObj(newId);
     StorageWorker.saveData('notes', emptyNote, newId);
@@ -76,8 +78,9 @@ class App extends React.Component {
   filter = (id) => {
     if (id === null) {
       this.reReadStorage();
+      this.setState({ filterEnabled: ''})
       return;
-    }    
+    }
     const notes = StorageWorker.getData('notes');
     const tags = StorageWorker.getData('tags');
     const filteredNotes = {};

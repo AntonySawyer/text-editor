@@ -1,3 +1,5 @@
+import { isLiteral } from "@babel/types";
+
 export const formatTag = () => {
   const input = document.getElementById('newTadName');
   const strToSave = input.value.trim().replace(/ /g, '_');
@@ -6,7 +8,10 @@ export const formatTag = () => {
 }
 
 export const getNoteObj = (id) => {
-  const title = document.getElementById('editNoteTitle').value;
+  let title = document.getElementById('editNoteTitle').value;
+  if (title === '') {
+    title = `Unnamed note №${id}`;
+  }
   const text = document.getElementById('noteText').innerText;
   const tagsArr = [];
   document.querySelectorAll('#noteTags span').forEach(el => tagsArr.push(el.innerText));

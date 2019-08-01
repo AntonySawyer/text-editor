@@ -23,9 +23,7 @@ export default class NotesViewer extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (document.querySelector('p[contenteditable="true"]') === null) {
-      this.setState({ title: nextProps.note.title });
-    }
+    this.setState({ title: nextProps.note.title });
   }
 
   handleChange = (event) => {
