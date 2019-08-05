@@ -1,5 +1,3 @@
-import { isLiteral } from "@babel/types";
-
 export const formatTag = () => {
   const input = document.getElementById('newTadName');
   const strToSave = input.value.trim().replace(/ /g, '_');
