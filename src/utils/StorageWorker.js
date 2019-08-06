@@ -3,10 +3,11 @@ export const getData = (key) => {
 };
 
 export const checkData = () => {
-  if (localStorage.getItem('notes') === null) {
-    localStorage.setItem('notes', JSON.stringify({ 1: { id: 1, title: 'New note', text: 'Click "edit" button!', tags: '' } }));
+  const notes = getData('notes');
+  if (notes === null || Object.keys(notes).length === 0) {
+    localStorage.setItem('notes', JSON.stringify({ 1: { id: 1, title: 'Unnamed note №1', text: 'Click "edit" button!', tags: '' } }));
   }
-  if (localStorage.getItem('tags') === null) {
+  if (getData('tags') === null) {
     localStorage.setItem('tags', JSON.stringify({}));
   }
 }
@@ -33,6 +34,7 @@ export const deleteData = (key, id) => {
   const modifyData = getData(key);
   delete modifyData[id];
   localStorage.setItem(key, JSON.stringify(modifyData));
+  checkData();
 }
 
 export const firstId = (key) => {

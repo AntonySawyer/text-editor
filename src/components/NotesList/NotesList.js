@@ -25,7 +25,7 @@ export default ({ activeNote, notes, tags, onChange, deleteData, saveData, newNo
       </ul>
       <span>Filter by: { filterEnabled || 'none' }</span>
       <button onClick={() => filter(null)} className="btn btn-inverted">X</button>
-      <TagCloud tags={tags} deleteData={deleteData} saveData={saveData} addNew={true} filter={filter} />
+      <TagCloud tags={tags} deleteData={deleteData} saveData={saveData} filter={filter} />
     </div>
   )
 }
