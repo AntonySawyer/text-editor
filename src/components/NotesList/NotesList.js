@@ -5,13 +5,13 @@ import './NotesList.scss';
 
 
 
-export default ({ activeNote, notes, tags, onChange, deleteData, saveData, newNote, filter, filterEnabled }) => {
+export default ({ activeNoteId, notes, tags, onChange, deleteData, saveData, newNote, filter, filterEnabled }) => {
   const NotesTitles = [];
   Object.keys(notes).forEach(id => {
-    NotesTitles.push(<li key={id} className={activeNote === id ? 'active' : undefined}>
+    NotesTitles.push(<li key={id} className={activeNoteId === id ? 'active' : undefined}>
       <label htmlFor={`note_${id}`}>{notes[id].title}</label>
       <input type="radio" id={`note_${id}`} name="notesTitles" 
-        checked={+id === +activeNote} 
+        checked={+id === +activeNoteId} 
         onChange={() => onChange({ id })} />
     </li>);
   });

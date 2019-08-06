@@ -41,7 +41,7 @@ export default class NotesViewer extends React.Component {
     if (matches !== null) {
       container.innerHTML = content.replace(/(#[^\s]+)/g, `<span class="hightlight">$1</span>`);
       const bindedTags = collectTags();
-      if (!matches.every(el => bindedTags.includes(el))) {
+      if (!matches.every(el => bindedTags.includes(el)) || !bindedTags.every(el => matches.includes(el))) {
         this.props.autoTagCreate(matches);
       }
       if (document.querySelector(':focus') !== null && document.querySelector(':focus').id === 'noteText') {
