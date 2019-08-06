@@ -11,10 +11,15 @@ export const getNoteObj = (id) => {
     title = `Unnamed note №${id}`;
   }
   const text = document.getElementById('noteText').innerText;
-  const tagsArr = [];
-  document.querySelectorAll('#noteTags span').forEach(el => tagsArr.push(el.innerText));
+  const tagsArr = collectTags();
   const tags = tagsArr.join(',');
   return {[id]: {id, title, text, tags}};
+}
+
+export const collectTags = () => {
+  const tagsArr = [];
+  document.querySelectorAll('#noteTags span').forEach(el => tagsArr.push(el.innerText));
+  return tagsArr;
 }
 
 export const injectTags = (note, tags) => {

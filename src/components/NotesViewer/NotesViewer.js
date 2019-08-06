@@ -1,6 +1,7 @@
 import React from 'react';
 import Tag from '../Tag';
 import { focusAtEnd } from '../../utils/domWorker';
+import { collectTags } from '../../utils/prepareDataToSave';
 import './NotesViewer.scss';
 
 export default class NotesViewer extends React.Component {
@@ -27,19 +28,21 @@ export default class NotesViewer extends React.Component {
 
   handleChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
-    if (event.target.id === 'noteText' && event.keyCode === 32) {
-      this.highlightTags('add');
+    const keyCodesForAdd = [8, 32];
+    if (event.target.id === 'noteText' && keyCodesForAdd.includes(event.keyCode)) {
+      this.highlightTags();
     }
   }
 
-  highlightTags = (mode = 'view') => {
+  highlightTags = () => {
     const container = document.getElementById('noteText');
     const content = container.innerText;
-    if (content.match(/(#[^\s]+)/g) !== null) {
+    const matches = content.match(/(#[^\s]+)/g).map(el => el.slice(1));
+    if (matches !== null) {
       container.innerHTML = content.replace(/(#[^\s]+)/g, `<span class="hightlight">$1</span>`);
-      if (content.match(/(#[^\s]+)/g).length !== document.querySelectorAll('#noteTags .tag-wrapper').length) {
-        const newTagArr = content.match(/(#[^\s]+)/g);
-        this.props.autoTagCreate(newTagArr.map(el => el.slice(1)));
+      const bindedTags = collectTags();
+      if (!matches.every(el => bindedTags.includes(el))) {
+        this.props.autoTagCreate(matches);
       }
       if (document.querySelector(':focus') !== null && document.querySelector(':focus').id === 'noteText') {
         focusAtEnd(container);
