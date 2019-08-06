@@ -37,10 +37,11 @@ export default class NotesViewer extends React.Component {
   highlightTags = () => {
     const container = document.getElementById('noteText');
     const content = container.innerText;
-    const matches = content.match(/(#[^\s]+)/g).map(el => el.slice(1));
+    const matches = content.match(/(#[^\s]+)/g);
     if (matches !== null) {
       container.innerHTML = content.replace(/(#[^\s]+)/g, `<span class="hightlight">$1</span>`);
       const bindedTags = collectTags();
+      matches.map(el => el.slice(1));
       if (!matches.every(el => bindedTags.includes(el)) || !bindedTags.every(el => matches.includes(el))) {
         this.props.autoTagCreate(matches);
       }
