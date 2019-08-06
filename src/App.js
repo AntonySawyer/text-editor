@@ -18,24 +18,32 @@ class App extends React.Component {
       activeNoteId: StorageWorker.firstId('notes'),
       tags: StorageWorker.getData('tags'),
       notes: StorageWorker.getData('notes'),
-      filterEnabled: ''
+      filterEnabled: '',
+      noteTags: ''
     }
   }
 
   changeNote = (target) => {
     DomWorker.editEnd();
-    this.setState({activeNoteId: target.id});
+    if (this.state.filterEnabled === '') {
+      this.reReadStorage(target.id);
+    } else {
+      this.setState({activeNoteId: target.id, 
+        noteTags: TagsFilter(this.state.tags, this.state.notes[target.id].tags.split(','))});
+    }
   }
 
-  reReadStorage = () => {
+  reReadStorage = (targetId = StorageWorker.firstId('notes')) => {
+    const tags = StorageWorker.getData('tags');
+    const notes = StorageWorker.getData('notes');
+    const noteTags = TagsFilter(tags, notes[targetId].tags.split(','));
     this.setState({
-      tags: StorageWorker.getData('tags'),
-      notes: StorageWorker.getData('notes'),
-      activeNoteId: this.state.activeNoteId
+      tags,
+      notes,
+      activeNoteId: targetId,
+      noteTags,
+      filterEnabled: ''
     })
-    if (!StorageWorker.isExist(this.state.activeNoteId)) {
-      this.setState({activeNoteId: StorageWorker.firstId('notes')})
-    }
   }
 
   deleteData = (key, id) => {
@@ -47,7 +55,6 @@ class App extends React.Component {
   saveData = (key, id) => {
     const dataToSave = key === 'tags' ? PrepareData.formatTag() : PrepareData.getNoteObj(id);
     StorageWorker.saveData(key, dataToSave, id);
-    this.reReadStorage();
     DomWorker.editEnd();
   }
 
@@ -55,12 +62,11 @@ class App extends React.Component {
     DomWorker.editStart();
     DomWorker.clearAllInputs();
     document.getElementById('editNoteTitle').value = document.getElementById('newNoteTitle').value;
-    document.getElementById('noteTags').innerHTML = '';
+    document.querySelectorAll('#noteTags span').forEach(el => el.innerHTML = '');
     const newId = StorageWorker.newId('notes');
     const emptyNote = PrepareData.getNoteObj(newId);
     StorageWorker.saveData('notes', emptyNote, newId);
-    this.reReadStorage();
-    this.setState({ activeNoteId: newId });
+    this.reReadStorage(newId);
   }
 
   autoTagCreate = (newTagsNote) => {
@@ -70,10 +76,9 @@ class App extends React.Component {
     newTagsTotal.map(i => PrepareData.formatTag(i));
     const newTagsTotalUnique = PrepareData.uniqueArr(newTagsTotal);
     newTagsTotalUnique.forEach(tag => StorageWorker.saveData('tags', tag));
-
     const modifNote = PrepareData.injectTags(notes[activeNoteId], newTagsNote);
     StorageWorker.saveData('notes', modifNote, activeNoteId);
-    this.reReadStorage();
+    this.reReadStorage(activeNoteId);
   }
 
   filter = (id) => {
@@ -93,14 +98,15 @@ class App extends React.Component {
     if (Object.keys(filteredNotes).length !== 0) {
       this.setState({ activeNoteId: Object.keys(filteredNotes)[0], 
         notes: filteredNotes,
-        filterEnabled: tags[id] });
+        filterEnabled: tags[id],
+        noteTags: TagsFilter(tags, filteredNotes[Object.keys(filteredNotes)[0]].tags.split(',')) });
     } else {
       this.deleteData('tags', id);
     }
   }
 
   render() {
-    const { activeNoteId, tags, notes } = this.state;
+    const { activeNoteId, tags, notes, filterEnabled, noteTags } = this.state;
     return (
     <div className="App">
       <NotesList
@@ -112,11 +118,11 @@ class App extends React.Component {
         saveData={ this.saveData }
         newNote={ this.newNote }
         filter={ this.filter }
-        filterEnabled={ this.state.filterEnabled }
+        filterEnabled={ filterEnabled }
       />
       <NotesViewer 
         note={ notes[this.state.activeNoteId] } 
-        tags={ TagsFilter(tags, notes[activeNoteId].tags.split(',')) }
+        tags={ noteTags }
         editNote={ DomWorker.editStart } 
         saveData={ this.saveData } 
         deleteData={ this.deleteData }

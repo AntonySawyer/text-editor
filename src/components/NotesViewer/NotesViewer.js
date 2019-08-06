@@ -1,13 +1,12 @@
 import React from 'react';
-import TagCloud from '../TagCloud';
+import Tag from '../Tag';
 import { focusAtEnd } from '../../utils/domWorker';
 import './NotesViewer.scss';
 
 export default class NotesViewer extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      title: this.props.note.title };
+    this.state = { title: this.props.note.title };
   }
 
   componentDidMount() {
@@ -38,7 +37,7 @@ export default class NotesViewer extends React.Component {
     const content = container.innerText;
     if (content.match(/(#[^\s]+)/g) !== null) {
       container.innerHTML = content.replace(/(#[^\s]+)/g, `<span class="hightlight">$1</span>`);
-      if (mode === 'add') {
+      if (content.match(/(#[^\s]+)/g).length !== document.querySelectorAll('#noteTags .tag-wrapper').length) {
         const newTagArr = content.match(/(#[^\s]+)/g);
         this.props.autoTagCreate(newTagArr.map(el => el.slice(1)));
       }
@@ -51,6 +50,14 @@ export default class NotesViewer extends React.Component {
   render() {
     const { note, tags, editNote, saveData, deleteData, filter } = this.props;
 
+    const TagsElements = [];
+    if (Object.keys(tags).length !== 0) {
+      Object.keys(tags).forEach(id => {
+        TagsElements.push(<Tag key={id} title={tags[id]} filter={() => filter(id)}
+          deleteData={() => deleteData('tags', id)} />)
+      });
+    }
+
     return (
       <div className="notes-viewer">
         <h1>{ this.state.title }</h1>
@@ -62,7 +69,7 @@ export default class NotesViewer extends React.Component {
         <p className="textArea" id="noteText" contentEditable={false} 
           onKeyUp={this.handleChange} name="text">{this.props.note.text}</p>
         <div id="noteTags">
-          <TagCloud tags={tags} addNew={false} filter={filter} deleteData={deleteData} />
+          {TagsElements}
         </div>
       </div>
   )}
