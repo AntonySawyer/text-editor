@@ -49,6 +49,20 @@ export const newId = (key) => {
 }
 
 export const isExist = (id) => {
-  const notesList = getData('notes');
-  return id in notesList;
+  const notes = getData('notes');
+  return id in notes;
+}
+
+export const clearUnusedTags = () => {
+  const notes = getData('notes');
+  const tags = getData('tags');
+  const tagsValues = Object.values(tags);
+  const used = [];
+  Object.keys(notes).forEach(id => notes[id].tags.split(',').forEach(tag => used.push(tag)));
+  const unused = tagsValues.filter(tag => !used.includes(tag));
+  Object.keys(tags).forEach(id => {
+    if (unused.includes(tags[id])) {
+      deleteData('tags', id);
+    }
+  })
 }

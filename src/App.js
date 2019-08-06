@@ -27,9 +27,6 @@ class App extends React.Component {
     DomWorker.editEnd();
     if (this.state.filterEnabled === '') {
       this.reReadStorage(target.id);
-    } else {
-      this.setState({activeNoteId: target.id, 
-        noteTags: TagsFilter(this.state.tags, this.state.notes[target.id].tags.split(','))});
     }
   }
 
@@ -56,6 +53,12 @@ class App extends React.Component {
     const dataToSave = key === 'tags' ? PrepareData.formatTag() : PrepareData.getNoteObj(id);
     StorageWorker.saveData(key, dataToSave, id);
     DomWorker.editEnd();
+    if (this.state.filterEnabled === '') {
+      this.reReadStorage(this.state.activeNoteId);
+    } else {
+      this.filter(this.state.filterEnabled);
+      this.setState({activeNoteId: this.state.activeNoteId});
+    }
   }
 
   newNote = () => {
@@ -79,6 +82,7 @@ class App extends React.Component {
     const modifNote = PrepareData.injectTags(notes[activeNoteId], newTagsNote);
     StorageWorker.saveData('notes', modifNote, activeNoteId);
     this.reReadStorage(activeNoteId);
+    StorageWorker.clearUnusedTags();
   }
 
   filter = (id) => {
